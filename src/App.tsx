@@ -1,18 +1,7 @@
-import {
-  ChakraProvider,
-  Box,
-  Text,
-  Grid,
-  theme,
-  Button,
-  Input,
-  InputGroup,
-  Flex,
-  ButtonGroup,
-} from "@chakra-ui/react";
-import React, { useState } from "react";
+import { ChakraProvider, Box, Grid, theme } from "@chakra-ui/react";
 import { ColorModeSwitcher } from "./ColorModeSwitcher";
-import Header from "./components/Header";
+// import Header from "./components/Header";
+import PostLists from "./components/postLists/PostLists";
 
 export const App = () => {
   return (
@@ -20,7 +9,8 @@ export const App = () => {
       <Box textAlign="center" fontSize="xl">
         <Grid minH="50vh" p={3}>
           <ColorModeSwitcher justifySelf="flex-end" />
-          <Header />
+          {/* <Header /> */}
+          <PostLists />
         </Grid>
       </Box>
     </ChakraProvider>
