@@ -1,6 +1,6 @@
-import { createSlice, nanoid, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { sub } from "date-fns";
-import { fetchPosts } from "./postActions";
+import { addPost, deletePost, fetchPosts, updatePostById } from "./postActions";
 
 export interface ReactionsOptions extends KeyStringObj {
   thumbsUp: number;
@@ -36,19 +36,6 @@ const postSlice = createSlice({
   name: "posts",
   initialState,
   reducers: {
-    postAdded: {
-      reducer: (state, { payload }: PayloadAction<Post>) => {
-        state.posts.push(payload);
-      },
-      prepare: (payload) => ({
-        payload: {
-          id: nanoid(),
-          date: new Date().toISOString(),
-          reactions,
-          ...payload,
-        },
-      }),
-    },
     addReaction: (
       state,
       { payload }: PayloadAction<{ id: number; name: keyof ReactionsOptions }>
@@ -58,6 +45,12 @@ const postSlice = createSlice({
     },
   },
   extraReducers(builder) {
+    builder.addCase(addPost.fulfilled, (state, { payload }) => {
+      if (payload) {
+        const post = { ...payload, date: new Date().toISOString(), reactions };
+        state.posts.unshift(post);
+      }
+    });
     builder.addCase(fetchPosts.pending, (state) => {
       state.status = "loading";
     });
@@ -70,13 +63,31 @@ const postSlice = createSlice({
           reactions,
           ...post,
         }))
-        .sort((a, b) => +b.id - +a.id);
+        .sort((a, b) => +b.date - +a.date);
 
       state.posts = state.posts.concat(posts);
+    });
+    builder.addCase(updatePostById.fulfilled, (state, { payload }) => {
+      if (payload) {
+        const oldReactions = state.posts.find(
+          (post) => post.id === payload.id
+        )?.reactions;
+        const posts = state.posts.filter((post) => post.id !== payload.id);
+        if (oldReactions) {
+          const updatePost = {
+            ...payload,
+            reactions: oldReactions,
+            date: new Date().toISOString(),
+          };
+          state.posts = [updatePost, ...posts];
+        }
+      }
+    });
+    builder.addCase(deletePost.fulfilled, (state, { payload }) => {
+      state.posts = state.posts.filter((post) => post.id + "" !== payload);
     });
   },
 });
 
-export const { postAdded, addReaction } = postSlice.actions;
-
+export const { addReaction } = postSlice.actions;
 export const postReducer = postSlice.reducer;
