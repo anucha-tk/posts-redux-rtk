@@ -1,6 +1,7 @@
 import { Button } from "@chakra-ui/react";
 import { useAppDispatch } from "../../hooks/hooks";
-import { addReaction, PostState } from "../../redux/posts/postSlice";
+import { addReaction, Post } from "../../redux/posts/postSlice";
+
 const reactionEmoji: { [key: string]: string } = {
   thumbsUp: "👍",
   wow: "😮",
@@ -10,7 +11,7 @@ const reactionEmoji: { [key: string]: string } = {
 };
 
 type ReactionButtonsProps = {
-  post: PostState;
+  post: Post;
 };
 
 function ReactionButtons({ post }: ReactionButtonsProps) {
@@ -20,10 +21,8 @@ function ReactionButtons({ post }: ReactionButtonsProps) {
       {Object.entries(reactionEmoji).map(([name, emoji]) => (
         <Button
           key={name}
-          //   @ts-ignore
           onClick={() => dispatch(addReaction({ id: post.id, name }))}
         >
-          {/* @ts-ignore */}
           {emoji} {post.reactions[name]}
         </Button>
       ))}
