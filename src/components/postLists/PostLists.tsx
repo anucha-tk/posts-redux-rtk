@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
-import { Post } from "../../redux/posts/postSlice";
+import { Post, selectAll } from "../../redux/posts/postSlice";
 import { useEffect } from "react";
 import { formatDistanceToNow, parseISO } from "date-fns";
 import ReactionButtons from "./ReactionButtons";
@@ -32,7 +32,7 @@ function PostLists() {
   const navigate = useNavigate();
   const { colorMode } = useColorMode();
   const dispatch = useAppDispatch();
-  const posts = useAppSelector(({ posts }) => posts.posts);
+  const posts = useAppSelector(selectAll);
   const status = useAppSelector(({ posts }) => posts.status);
   const toast = useToast();
 

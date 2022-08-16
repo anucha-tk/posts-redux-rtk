@@ -11,7 +11,7 @@ import {
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
-import { Post } from "../../redux/posts/postSlice";
+import { Post, selectById } from "../../redux/posts/postSlice";
 import { useEffect } from "react";
 import { updatePostById } from "../../redux/posts/postActions";
 
@@ -19,8 +19,7 @@ type PostInputs = Partial<Post>;
 
 function EditPost() {
   const { postId } = useParams();
-  const { posts } = useAppSelector((state) => state.posts);
-  const post = posts.find((post) => post.id + "" === postId);
+  const post = useAppSelector((state) => selectById(state, postId + ""));
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const toast = useToast();
@@ -34,12 +33,15 @@ function EditPost() {
 
   const onSubmit = async (value: PostInputs) => {
     try {
-      if (postId && value.title && value.body) {
+      if (postId && value.title && value.body && post) {
         dispatch(
           updatePostById({
-            postId,
+            id: +postId,
             title: value.title,
             body: value.body,
+            userId: post?.userId,
+            reactions: post?.reactions,
+            date: new Date().toISOString(),
           })
         );
       }

@@ -1,5 +1,10 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {
+  createEntityAdapter,
+  createSlice,
+  PayloadAction,
+} from "@reduxjs/toolkit";
 import { sub } from "date-fns";
+import { RootState } from "../store";
 import { addPost, deletePost, fetchPosts, updatePostById } from "./postActions";
 
 export interface ReactionsOptions extends KeyStringObj {
@@ -29,9 +34,18 @@ export interface PostState extends KeyStringObj {
   error: null;
 }
 
+const postAdapter = createEntityAdapter<Post>({
+  selectId: (post) => post.id,
+  sortComparer: (a, b) => b.date.localeCompare(a.date),
+});
+
+const initialState = postAdapter.getInitialState({
+  status: "idle",
+  error: null,
+});
+
 const reactions = { thumbsUp: 0, wow: 0, heart: 0, rocket: 0, coffee: 0 };
 
-const initialState: PostState = { posts: [], status: "idle", error: null };
 const postSlice = createSlice({
   name: "posts",
   initialState,
@@ -40,7 +54,7 @@ const postSlice = createSlice({
       state,
       { payload }: PayloadAction<{ id: number; name: keyof ReactionsOptions }>
     ) => {
-      const post = state.posts.find((post) => post.id === payload.id);
+      const post = state.entities[payload.id];
       post && post.reactions[payload.name]++;
     },
   },
@@ -48,7 +62,7 @@ const postSlice = createSlice({
     builder.addCase(addPost.fulfilled, (state, { payload }) => {
       if (payload) {
         const post = { ...payload, date: new Date().toISOString(), reactions };
-        state.posts.unshift(post);
+        postAdapter.addOne(state, post);
       }
     });
     builder.addCase(fetchPosts.pending, (state) => {
@@ -64,30 +78,19 @@ const postSlice = createSlice({
           ...post,
         }))
         .sort((a, b) => +b.date - +a.date);
-
-      state.posts = state.posts.concat(posts);
+      postAdapter.upsertMany(state, posts);
     });
     builder.addCase(updatePostById.fulfilled, (state, { payload }) => {
-      if (payload) {
-        const oldReactions = state.posts.find(
-          (post) => post.id === payload.id
-        )?.reactions;
-        const posts = state.posts.filter((post) => post.id !== payload.id);
-        if (oldReactions) {
-          const updatePost = {
-            ...payload,
-            reactions: oldReactions,
-            date: new Date().toISOString(),
-          };
-          state.posts = [updatePost, ...posts];
-        }
-      }
+      payload && postAdapter.upsertOne(state, payload);
     });
-    builder.addCase(deletePost.fulfilled, (state, { payload }) => {
-      state.posts = state.posts.filter((post) => post.id + "" !== payload);
+    builder.addCase(deletePost.fulfilled, (state, { payload: postId }) => {
+      postId && postAdapter.removeOne(state, postId);
     });
   },
 });
 
+export const { selectAll, selectById, selectIds } =
+  postAdapter.getSelectors<RootState>((state) => state.posts);
 export const { addReaction } = postSlice.actions;
 export const postReducer = postSlice.reducer;
+// const postIds = postAdapter.selectId()

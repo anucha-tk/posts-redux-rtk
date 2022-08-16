@@ -1,13 +1,23 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { Post, ReactionsOptions } from "./postSlice";
 
 const BASE_URL = "https://jsonplaceholder.typicode.com/posts";
 
-type PostApiResponse = {
+export type PostApiResponse = {
   userId: number;
   id: number;
   title: string;
   body: string;
+};
+
+export type PostUpdateApiResponse = {
+  userId: number;
+  id: number;
+  title: string;
+  body: string;
+  reactions: ReactionsOptions;
+  date: string;
 };
 
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
@@ -20,25 +30,23 @@ export const addPost = createAsyncThunk(
   async (data: { title: string; body: string }) => {
     try {
       const res = await axios.post(`${BASE_URL}`, data);
-      return res.data as PostApiResponse;
+      return res.data as PostUpdateApiResponse;
     } catch (error) {}
   }
 );
 
 export const updatePostById = createAsyncThunk(
   "post/fetchPostById",
-  async ({
-    postId,
-    title,
-    body,
-  }: {
-    postId: string;
-    title: string;
-    body: string;
-  }) => {
+  async ({ id, title, body, reactions, userId, date }: Post) => {
     try {
-      const res = await axios.put(`${BASE_URL}/${postId}`, { title, body });
-      return res.data as PostApiResponse;
+      const res = await axios.put(`${BASE_URL}/${id}`, {
+        title,
+        body,
+        reactions,
+        userId,
+        date,
+      });
+      return res.data as PostUpdateApiResponse;
     } catch (error) {}
   }
 );
