@@ -1,12 +1,16 @@
-import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import { configureStore } from "@reduxjs/toolkit";
 import { counterReducer } from "./counter/counterSlice";
-import { postReducer } from "./posts/postSlice";
-const rootReducers = combineReducers({
+import { postApi } from "./posts/postApi";
+
+const rootReducers = {
+  [postApi.reducerPath]: postApi.reducer,
   counter: counterReducer,
-  posts: postReducer,
-});
+};
+
 export const store = configureStore({
   reducer: rootReducers,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(postApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

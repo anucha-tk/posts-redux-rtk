@@ -10,19 +10,22 @@ import {
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
-import { Post, selectById } from "../../redux/posts/postSlice";
+import { useAppSelector } from "../../hooks/hooks";
+import {
+  Post,
+  selectById,
+  useUpdatePostMutation,
+} from "../../redux/posts/postSlice";
 import { useEffect } from "react";
-import { updatePostById } from "../../redux/posts/postActions";
 
 type PostInputs = Partial<Post>;
 
 function EditPost() {
   const { postId } = useParams();
-  const post = useAppSelector((state) => selectById(state, postId + ""));
-  const dispatch = useAppDispatch();
+  const post = useAppSelector((state) => selectById(state, Number(postId)));
   const navigate = useNavigate();
   const toast = useToast();
+  const [updatePostById] = useUpdatePostMutation();
 
   const {
     handleSubmit,
@@ -34,16 +37,16 @@ function EditPost() {
   const onSubmit = async (value: PostInputs) => {
     try {
       if (postId && value.title && value.body && post) {
-        dispatch(
-          updatePostById({
-            id: +postId,
+        updatePostById({
+          id: postId,
+          data: {
             title: value.title,
             body: value.body,
             userId: post?.userId,
             reactions: post?.reactions,
             date: new Date().toISOString(),
-          })
-        );
+          },
+        });
       }
     } catch (error) {
       toast({
