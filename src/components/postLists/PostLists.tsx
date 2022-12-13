@@ -105,12 +105,18 @@ function PostLists() {
 
   return (
     <>
-      <Box>
+      <Box
+        display="grid"
+        justifyItems={"center"}
+        alignItems="center"
+        alignContent="center"
+        gap={4}
+      >
         {isLoading ? (
           <Spinner size="xl" />
         ) : (
           <>
-            <Grid>
+            <Grid w="100%" alignContent="center" justifyItems={"center"}>
               <Heading color={"tomato"} as="i" fontSize="2em">
                 Post Lists
               </Heading>
@@ -156,7 +162,7 @@ function PostLists() {
               <Divider my={3} />
             </Grid>
             <Grid
-              templateColumns={["1fr", "1f 1f1", "1fr 1fr 1fr"]}
+              templateColumns={["1fr", "1f 1f1", "1fr 1fr", "1fr 1fr 1fr"]}
               justifyContent={"stretch"}
               rowGap={2}
               columnGap={2}
@@ -171,7 +177,11 @@ function PostLists() {
                     p={2}
                     shadow="md"
                     borderWidth="0.25em"
+                    rounded="md"
+                    boxShadow="base"
                     backgroundColor={colorMode === "light" ? "#f3f3f3" : "000"}
+                    display="grid"
+                    gap={2}
                   >
                     <GridItem
                       display={"flex"}
