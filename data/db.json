@@ -1,46 +1,46 @@
 {
   "posts": [
     {
-      "title": "bad",
-      "body": "asd",
+      "title": "Welcome",
+      "body": "For test React postlist",
       "userId": 1,
-      "date": "2022-08-18T08:11:47.137Z",
+      "date": "2024-01-05T02:59:01.844Z",
       "reactions": {
-        "thumbsUp": 2,
+        "thumbsUp": 1,
         "wow": 1,
         "heart": 0,
         "rocket": 0,
+        "coffee": 1
+      },
+      "id": 1
+    },
+    {
+      "title": "Simple",
+      "body": "postlists",
+      "userId": 1,
+      "date": "2024-01-05T03:04:52.681Z",
+      "reactions": {
+        "thumbsUp": 0,
+        "wow": 0,
+        "heart": 1,
+        "rocket": 1,
         "coffee": 0
       },
       "id": 2
     },
     {
-      "title": "123",
-      "body": "123",
+      "title": "Hi",
+      "body": "My name is Post App",
       "userId": 1,
-      "date": "2022-08-18T08:32:50.805Z",
+      "date": "2024-01-05T03:04:26.468Z",
       "reactions": {
-        "thumbsUp": 5,
-        "wow": 5,
-        "heart": 3,
-        "rocket": 1,
-        "coffee": 3
-      },
-      "id": 3
-    },
-    {
-      "title": "simple2",
-      "body": "test simple",
-      "userId": 1,
-      "date": "2022-12-13T08:18:48.196Z",
-      "reactions": {
-        "thumbsUp": 2,
-        "wow": 2,
-        "heart": 0,
+        "thumbsUp": 0,
+        "wow": 0,
+        "heart": 1,
         "rocket": 0,
         "coffee": 0
       },
-      "id": 4
+      "id": 3
     }
   ]
 }
